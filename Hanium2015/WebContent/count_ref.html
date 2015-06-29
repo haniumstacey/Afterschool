@@ -1,0 +1,9 @@
+<?PHP
+include_once "./functions.inc";
+$con=mysql_connect("localhost","root","apmsetup");
+mysql_select_db("hanium",$con);
+$query="update board set refnum=refnum+1 where uid=$uid";
+mysql_query($query) or die (mysql_error());
+mysql_close($con);
+forward(dest_url("./read.html",$page,$uid));
+?>

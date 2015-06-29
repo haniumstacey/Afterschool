@@ -1,0 +1,170 @@
+<meta charset="utf-8"> <!-- 책에는 없으나, 한글 깨짐 현상을 해결하기 위해 세 줄의 코드를 추가한다. -->
+
+<?PHP
+include("./config.cfg");
+include("./functions.inc");	//각 프로그램에서 사용되는 함수들을 모아놓은 파일
+if (!$page)
+$page = 1;
+
+#----------검색 시 질의문에 추가할 문자----------#
+if ($key)
+	$where = "where $kind like '%$key%'";
+
+#----------데이터베이스에 연결----------#
+$con = mysql_connect("localhost", "root", "apmsetup");
+mysql_select_db("hanium", $con);
+
+#----------총 글의 수 검색----------#
+$query = "select count(*) total_rows from board";
+$result = mysql_query($query) or die(mysql_error());
+$total_rows = current(mysql_fetch_array($result));
+
+#----------리스트에서 사용되는 변수 정의----------#
+$total_pages = ceil($total_rows/$rows_page);
+$start_now = $rows_page * ($page - 1);
+$pre_page = $page > 1 ? $page - 1 : NULL;
+$next_page = $page < $total_pages ? $page + 1  : NULL;
+$start_page = (ceil($page/$direct_pages) -1) * $direct_pages + 1;
+$end_page = $total_pages >= $start_page + $direct_pages ?
+$start_page + $direct_pages - 1  : $total_pages;
+?>
+
+<html>
+<head>
+	<style>
+	<!--
+
+	<?PHP include ("./common_style.inc"); ?>
+
+	TD
+	{
+		padding: 3px;
+	}
+	.field_tr
+	{
+		background: #DCDCDC;	/* 목록의 가장 첫 번째 행은 gainsboro */
+	}
+	.list_tr
+	{
+		background: #FFFFFF;	/* 목록에 각 줄의 게시글들의 색깔은 흰색 */
+	}
+	-->
+	</style>
+	</head>
+	<body>
+		<center>
+			<!-- <table>
+				<tr>
+					<td colspan="5">총게시물:<?=$total_rows?></td>
+				</tr>
+			</table> -->
+			<table nowrap>
+				<tr class="field_tr" align-"center">
+					<td width="50">NO.</td>
+					<td width="360">제목</td>
+					<td width="90">작성자</td>
+					<td width="60">날짜</td>
+					<td width="40">조회수</td>
+				</tr>
+
+				<?PHP
+				#----------데이터베이스에서 목록을 추출----------#
+				$query = "select uid, gid, depth, name, subject, writedate, refnum from board
+				$where order by gid desc, depth asc limit $start_now, $rows_page";
+				$result = mysql_query( $query ) or die (mysql_error());
+				while ( $row = mysql_fetch_array( $result ))
+				{
+					list( $uid, $gid, $depth, $name, $subject, $writedate, $refnum, $mail ) = $row;
+
+					#----------HTML 특수 문자 처리----------#
+					$subject = htmlspecialchars( $subject );
+
+					#----------제목의 길이 제한----------#
+					if (strlen ($subject) > $row_length )
+						$subject = substr( $subject, 0,  $row_length )."...";
+
+					?>
+
+					<tr class="list_tr" >
+						<td width="50" align="center" ><?=$uid?></td>
+						<td width="360"><?=str_repeat("&nbsp;&nbsp;", strlen( $depth))?>
+							<a href="<?=dest_url( "./count_ref.html", $page, $uid )?>"><?=$subject?></a>
+						</td>
+						<td width="90" align="center">
+
+							<?PHP
+							if ($mail)
+								echo( "<a href=\"mailto:$mail\">$name</a>" );
+							else
+								echo("$name");
+							?>
+						</td>
+						<td width="60" align="center"><?=$writedate?></td>
+						<td width="40" align="center"><?=$refnum?></td>
+					</tr>
+
+					<?PHP
+				}
+				?>
+
+				</table>
+				<table>
+					<tr>
+						<td width="100" align="left">
+
+							<?PHP
+							#----------이전페이지 존재시 링크----------#
+							if($pre_page)
+								echo("<a href=\"".dest_url("./list.html", $pre_page)."\">[이전]</a>" );
+
+							#----------다음페이지 존재시 링크----------#
+							if($next_page)
+								echo("<a href=\"".dest_url("./list.html", $next_page)."\">[다음]</a>" );
+							?>
+
+						</td>
+						<td align="center">&nbsp;
+
+							<?PHP
+							#----------이전 페이지들을 링크----------#
+							if( $start_page > 1 )
+								echo("<a href=\"".dest_url("./list.html", $start_page - 1)."\">[pre]</a>");
+								#----------바로 이동하는 페이지를 나열----------#
+								for( $dest_page = $start_page; $dest_page <= $end_page; $dest_page++)
+								if ($dest_page != $page)
+								echo("<a href=\"".dest_url( "./list.html", $dest_page)."\">[$dest_page]</a>");
+								else
+								echo("&nbsp;$dest_page&nbsp");
+								#----------다음 페이지들을 링크----------#
+								if($end_page < $total_pages)
+								echo("<a href=\"".dest_url( "./list.html", $end_page + 1)."\">[next]</a>");
+								?>
+								</td>
+								<td width="100" align="right">
+								<a href="<?=dest_url("./write.html", $page )?>">글쓰기</a>
+								<!-- <a href="./list.html">목록</a> -->
+								</td>
+								</tr>
+				</table>
+				<table>
+				<form name="search_from" method="post" action="./list.html?">
+					<tr align="center">
+						<td>
+							<select name="kind">
+								<option value="subject"><? if($kind == "subject") echo("selected");?>글제목
+								</option>
+								<option value="article"><? if($kind == "article") echo("selected");?>내용
+								</option>
+								<option value="name"><? if($kind == "name") echo("selected");?>이름
+								</option>
+							</select>
+							<input type="text" name="key" value="<?=$key?>" size="20" maxlength="30">
+							<input type="submit" value="찾기">
+							<!-- ' 내가 쓴 글 ' 버튼 만들어야 되는데 -->
+						</td>
+					</tr>
+				</form>
+			</table>
+		</center>
+	</body>
+	</html> -->
