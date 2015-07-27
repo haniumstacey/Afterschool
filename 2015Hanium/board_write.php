@@ -56,13 +56,13 @@
 				</tr>
 			</table>
 		</center>
-				<form name="form2">
+	</form>
+		<form name="form2">
 								<p><img src="images/hone.png" width="48" height="46" border="0" alt="hone.png"> <img src="images/messasge.png" width="51" height="46"
 				border="0" alt="messasge.png"> <img src="images/mypage.png" width="49" height="50" border="0" alt="mypage.png"> <img src="images/mileage.png"
 				width="50" height="50" border="0" alt="mileage.png"> <img
 				src="images/gift.png" width="49" height="50" border="0" alt="gift.png">
 			</p>
 		</form>
-	</form>
 </body>
 </html>

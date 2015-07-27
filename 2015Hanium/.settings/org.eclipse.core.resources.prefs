@@ -1,2 +1,9 @@
 eclipse.preferences.version=1
+encoding/board_delete.php=UTF-8
+encoding/board_edit.php=UTF-8
+encoding/board_read.php=UTF-8
+encoding/board_reply.php=UTF-8
 encoding/board_write.php=UTF-8
+encoding/paper_list.php=UTF-8
+encoding/paper_make1.php=UTF-8
+encoding/paper_noright.php=UTF-8
