@@ -36,27 +36,19 @@ $passwd_now = trim($passwd_now);
 $passwd_new = trim($passwd_new);
 $passwd_new_chk = trim($passwd_new_chk);
 
-#----------현재비번과 사용자가 입력한 현재비번이 불일치할 경우----------#
-if ( $passwd_now != $chk_passwd_now ) {
-	//현재 비번이 오류라는 팝업창을 띄운다.
-	echo "<script>
-window.open('./mypage_passwdnow_incor.php','기존의 비밀번호가 올바르지 않습니다.','width=600,height=600,top=100,left=100');
-</script>";
-}
-
-#----------사용자가 새롭게 입력한 두 비번이 불일치할 경우----------#
-if ( $passwd_new != $passwd_new_chk ) {
-	//현재 비번이 오류라는 팝업창을 띄운다.
-	echo "<script>
-window.open('./mypage_passwdnews_incor.php','새로 입력하신 비밀번호가 불일치합니다.','width=600,height=600,top=100,left=100');
-</script>";
-}
-
 #----------입력값 이상유무 확인----------#
 if ( !$passwd_now || !$passwd_new || !$passwd_new_chk)
 {
 	error("빈 정보란이 있으면 안됩니다.");
 	exit;
+} else if ($passwd_now != $chk_passwd_now) {
+	#----------현재비번과 사용자가 입력한 현재비번이 불일치할 경우----------#
+		//현재 비번이 오류라는 팝업창을 띄운다.
+	error("기존의 비밀번호가 올바르지 않습니다.");
+} else if ($passwd_new != $passwd_new_chk) {
+	#----------사용자가 새롭게 입력한 두 비번이 불일치할 경우----------#
+	//현재 비번이 오류라는 팝업창을 띄운다.
+	error("새로 입력하신 비밀번호가 불일치합니다.");
 } else {
 	#----------userinfo 테이블에 글 삽입----------#
 	$query = "update userinfo set passwd ='$passwd_new' where id='test'";
