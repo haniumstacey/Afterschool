@@ -77,10 +77,10 @@
 		 	</tr>
 		 </table>
 		 <tr align="right">
-		 	<td><a href="<?=dest_url( "./edit.html", $page, $uid )?>">수정</a>
-		 		<a href="<?=dest_url( "./reply.html", $page, $uid )?>">답변</a>
-		 		<a href="<?=dest_url( "./delete.html", $page, $uid )?>">삭제</a>
-		 		<a href="<?=dest_url( "./list.html", $page, $uid )?>">목록</a></td>
+		 	<td><a href="<?=dest_url( "./edit.php", $page, $uid )?>">수정</a>
+		 		<a href"<?=dest_url( "./reply.php", $page, $uid )?>">답변</a>
+		 		<a href"<?=dest_url( "./delete.php", $page, $uid )?>">삭제</a>
+		 		<a href"<?=dest_url( "./list.php", $page, $uid )?>">목록</a></td>
 		 	</tr>
 		 </table>
 	</center>
